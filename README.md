@@ -71,26 +71,9 @@
 
 ---
 
-# 3. 프로젝트 구조
 
-```text
-bigdata-subway-station-analysis/
-├── README.md
-├── .gitignore
-├── .env
-└── src/
-    └── pipeline/
-        ├── data.py
-        ├── join_data.py
-        ├── convert.py
-        ├── analysis.py
-        ├── run_pipeline.sh
-        └── plot.py
-```
 
----
-
-# 4. 데이터셋
+# 3. 데이터셋
 
 모든 데이터는 서울 열린데이터 광장 Open API를 통해 자동 수집하였다.
 
@@ -118,7 +101,7 @@ bigdata-subway-station-analysis/
 
 ---
 
-# 5. 실행 가이드
+# 4. 실행 가이드
 
 ## Step 1. 환경 변수 설정
 
@@ -149,7 +132,7 @@ final_top100_report.csv
 
 생성
 
-## Step 4. 시각화 실행
+## Step 4. 시각화 실행(vscode 등 외부 환경에서 실행)
 
 ```bash
 python plot.py
@@ -157,7 +140,7 @@ python plot.py
 
 ---
 
-# 6. 분석 결과 및 인사이트
+# 5. 분석 결과 및 인사이트
 
 ## 시각화 기준
 
