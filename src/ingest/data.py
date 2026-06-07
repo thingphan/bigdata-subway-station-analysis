@@ -5,10 +5,17 @@ import pandas as pd
 import time
 from datetime import datetime, timedelta
 import subprocess
+import os  
+from dotenv import load_dotenv
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-API_KEY = "70436f69666b6d6736356b5a524754"
+load_dotenv() 
+API_KEY = os.environ.get("SEOUL_API_KEY")
+
+if not API_KEY:
+    raise ValueError("API 키가 없습니다. .env 파일을 확인해주세요.")
+
 HDFS_PATH = "/user/maria_dev/project/" 
 
 def upload_to_hdfs(file_name):
