@@ -25,16 +25,15 @@ hr_columns = [c for c in df_time.columns if c.startswith("HR_")]
 sum_expression = " + ".join(hr_columns)
 
 df_time_processed = df_time.withColumn("ROW_TOTAL", expr(sum_expression)) \
-                            .groupBy("STOPS_ARS_NO") \
+                            .groupBy("STOPS_ID") \
                             .agg(_sum("ROW_TOTAL").alias("TOTAL_PASSENGERS"))
 
-#둘이 이너 Inner join
-#조건: bus_stop_coords의 STOPS_NO == bus_time_data_2025의 STOPS_ARS_NO
+#둘이 이너 Inner join 
 df_bus_joined = df_coords_processed.join(
     df_time_processed,
-    df_coords_processed.STOPS_NO == df_time_processed.STOPS_ARS_NO,
+    df_coords_processed.STOPS_NO == df_time_processed.STOPS_ID,
     "inner"
-).drop("STOPS_ARS_NO")
+).drop("STOPS_ID")
 
 # ==========================================
 # 행정동 + 생활인구 데이터 전처리 및 조인 
