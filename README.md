@@ -174,10 +174,4 @@ python plot.py
 
 ### Gemini 3.1 Pro
 
-* 프로젝트 기획 아이디어 도출
-* Hadoop-Spark-Hive 파이프라인 설계 검토
-* Spark UDF 구현 보조
-* PyProj 관련 오류 디버깅 지원
-* Plotly 시각화 코드 작성 보조
-
-AI는 개발 보조 도구로 활용되었으며, 최종 구현 및 검증은 직접 수행하였다.
+*프로젝트명 아이디어 참고, 하둡 분산 환경 Spark UDF 및 pyproj 라이브러리 의존성 에러 디버깅, 시각화 레이아웃(Plotly Subplots) 아이디어 보조.
