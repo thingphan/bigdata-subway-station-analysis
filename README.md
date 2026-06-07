@@ -168,7 +168,7 @@ python plot.py
 
 ---
 
-# 7. AI Tool Usage
+# 6. AI Tool Usage
 
 본 프로젝트에서는 다음과 같은 AI 도구를 활용하였다.
 
