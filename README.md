@@ -130,7 +130,7 @@ chmod +x run_pipeline.sh
 final_top100_report.csv
 ```
 
-생성
+생성(시각화 실행할 환경으로 다운로드 필요함)
 
 ## Step 4. 시각화 실행(vscode 등 외부 환경에서 실행)
 
