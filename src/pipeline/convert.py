@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
 import subprocess
 import pandas as pd
 import pyproj
@@ -12,16 +11,24 @@ HDFS_OUTPUT = "/user/maria_dev/project/result_pop_data_converted.csv"
 def run_cmd(cmd):
     result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     if result.returncode != 0:
-        raise RuntimeError(f"fail: {' '.join(cmd)}\n{result.stderr}")
+        raise RuntimeError("fail: {}\n{}".format(" ".join(cmd), result.stderr))
     return result.stdout
 
-# 1. HDFS -> 로컬 다운로드
-run_cmd(["hdfs", "dfs", "-get", "-f", HDFS_INPUT, LOCAL_INPUT])
+# 1. HDFS -> 로컬 다운로드 (디렉터리 병합)
+run_cmd(["hdfs", "dfs", "-getmerge", HDFS_INPUT, LOCAL_INPUT])
 
 # 2. 로컬 파일 읽기
 df = pd.read_csv(LOCAL_INPUT)
 
-# 3. 좌표 변환
+# 3. 헤더 중복/문자열 행 제거
+df = df[df["XCNTS_VALUE"] != "XCNTS_VALUE"]
+
+# 4. 숫자형 변환
+df["XCNTS_VALUE"] = pd.to_numeric(df["XCNTS_VALUE"], errors="coerce")
+df["YDNTS_VALUE"] = pd.to_numeric(df["YDNTS_VALUE"], errors="coerce")
+df = df.dropna(subset=["XCNTS_VALUE", "YDNTS_VALUE"])
+
+# 5. 좌표 변환
 transformer = pyproj.Transformer.from_crs("epsg:5181", "epsg:4326", always_xy=True)
 
 def transform(x, y):
@@ -33,10 +40,10 @@ df[["DONG_LON", "DONG_LAT"]] = df.apply(
     axis=1
 )
 
-# 4. 로컬 저장
+# 6. 로컬 저장
 df.to_csv(LOCAL_OUTPUT, index=False)
 
-# 5. 로컬 -> HDFS 업로드
+# 7. 로컬 -> HDFS 업로드
 run_cmd(["hdfs", "dfs", "-put", "-f", LOCAL_OUTPUT, HDFS_OUTPUT])
 
 print("done:", HDFS_OUTPUT)
