@@ -103,6 +103,13 @@
 
 # 4. 실행 가이드 
 
+## Step 0. SSH 터널 설정
+gcptutorial 계정에서 추가 SSH 터널 열기
+```bash
+ssh -N -L 8501:localhost:8501 maria_dev@localhost -p 2222
+```
+이후 새로운 터미널에서 다음 단계 진행
+
 ## Step 1. 환경 변수 설정
 
 프로젝트 루트에 `.env` 파일 생성 (서울 열린데이터 광장 인증키 입력)
