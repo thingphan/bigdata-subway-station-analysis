@@ -2,8 +2,8 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# 1. 페이지 기본 설정
-st.set_page_config(page_title="서울시 지하철 접근성 소외지역 분석", layout="wide")
+# 1. 페이지 기본 설정 (layout을 centered로 변경하여 너비 최적화)
+st.set_page_config(page_title="서울시 지하철 접근성 소외지역 분석", layout="centered")
 st.title("서울시 지하철 접근성 소외지역 분석 대시보드")
 
 # 2. 데이터 로드 및 전처리
@@ -37,7 +37,7 @@ if total_w > 0:
 else:
     w_pop, w_on, w_dist = 0.333, 0.333, 0.333
 
-# 적용된 실제 비율(%)을 사용자에게 명확히 고지 (줄바꿈 마크다운 최적화)
+# 적용된 실제 비율(%)을 사용자에게 명확히 고지
 st.sidebar.info(
     f"**실제 적용 반영비율**\n\n"
     f"- 생활인구: **{w_pop*100:.1f}%**\n\n"
@@ -90,30 +90,4 @@ if len(filtered_df) > 0:
         size="daily_total_on", color="dynamic_score",
         color_continuous_scale=px.colors.sequential.YlOrRd, size_max=35, opacity=0.9,
         labels={
-            "dynamic_score": "취약 지수 (점수)", "daily_total_on": "일일 승하차", 
-            "distance_km": "지하철역 거리(km)", "total_living_pop": "상주 생활인구", "ADSTRD_NM": "행정동"
-        }
-    )
-    fig_map.update_layout(
-        mapbox_style="carto-positron",
-        mapbox_zoom=10.5,
-        mapbox_center={"lat": 37.5665, "lon": 126.9780},
-        margin={"r":0, "t":0, "l":0, "b":0}
-    )
-    st.plotly_chart(fig_map, use_container_width=True)
-
-
-    st.markdown("---")
-    st.subheader("상세 정류장 목록 (Top 15)")
-    
-    # 출력에 필요한 컬럼 추출 및 영문명을 한글 직관적 명칭으로 매핑
-    display_df = filtered_df[['STOPS_NM', 'ADSTRD_NM', 'daily_total_on', 'dynamic_score']].head(15).rename(columns={
-        'STOPS_NM': '정류장명',
-        'ADSTRD_NM': '행정동',
-        'daily_total_on': '일일 승하차 인원',
-        'dynamic_score': '교통 취약 지수'
-    })
-
-    st.table(display_df)
-else:
-    st.warning("선택하신 조건에 맞는 데이터가 없습니다.")
+            "dynamic_score": "취약 지수 (
