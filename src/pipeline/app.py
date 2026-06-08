@@ -116,6 +116,4 @@ with col1:
 with col2:
     st.dataframe(
         filtered_df[['STOPS_NM', 'ADSTRD_NM', 'daily_total_on', 'dynamic_score']].head(15),
-        use_container_width=True,
-        hide_index=True
     )
