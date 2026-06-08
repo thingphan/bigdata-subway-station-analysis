@@ -103,7 +103,12 @@ with col1:
                 "distance_km": "지하철역 거리(km)", "total_living_pop": "생활인구", "ADSTRD_NM": "행정동"
             }
         )
-        fig_map.update_layout(map_style="carto-positron", map_zoom=10.5, map_center={"lat": 37.5665, "lon": 126.9780}, margin={"r":0, "t":0, "l":0, "b":0})
+        fig_map.update_layout(
+            mapbox_style="carto-positron",
+            mapbox_zoom=10.5,
+            mapbox_center={"lat": 37.5665, "lon": 126.9780},
+            margin={"r":0, "t":0, "l":0, "b":0}
+        )
         st.plotly_chart(fig_map, use_container_width=True)
     else:
         st.warning("조건에 맞는 정류장이 없습니다. 좌측 패널에서 조건을 완화해 보세요.")
