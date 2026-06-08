@@ -8,12 +8,12 @@ st.set_page_config(page_title="서울시 지하철 접근성 소외지역 분석
 st.markdown(
     """
     <style>
-    /* 왼쪽 사이드바 너비 늘리기 */
+
     [data-testid="stSidebar"] {
         min-width: 380px;
-        max-width: 500px;
+        max-width: 380px;
     }
-    /* 최상단 제목 줄바꿈 방지 */
+ 
     h1 {
         white-space: nowrap;
     }
