@@ -90,4 +90,29 @@ if len(filtered_df) > 0:
         size="daily_total_on", color="dynamic_score",
         color_continuous_scale=px.colors.sequential.YlOrRd, size_max=35, opacity=0.9,
         labels={
-            "dynamic_score": "취약 지수 (
+            "dynamic_score": "취약 지수 (점수)", "daily_total_on": "일일 승하차", 
+            "distance_km": "지하철역 거리(km)", "total_living_pop": "상주 생활인구", "ADSTRD_NM": "행정동"
+        }
+    )
+    fig_map.update_layout(
+        mapbox_style="carto-positron",
+        mapbox_zoom=10.5,
+        mapbox_center={"lat": 37.5665, "lon": 126.9780},
+        margin={"r":0, "t":0, "l":0, "b":0}
+    )
+    st.plotly_chart(fig_map, use_container_width=True)
+
+    st.markdown("---")
+    st.subheader("상세 정류장 목록 (Top 15)")
+    
+    # 출력에 필요한 컬럼 추출 및 영문명을 한글 직관적 명칭으로 매핑
+    display_df = filtered_df[['STOPS_NM', 'ADSTRD_NM', 'daily_total_on', 'dynamic_score']].head(15).rename(columns={
+        'STOPS_NM': '정류장명',
+        'ADSTRD_NM': '행정동',
+        'daily_total_on': '일일 승하차 인원',
+        'dynamic_score': '교통 취약 지수'
+    })
+
+    st.table(display_df)
+else:
+    st.warning("선택하신 조건에 맞는 데이터가 없습니다.")
