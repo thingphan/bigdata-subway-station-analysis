@@ -1,119 +1,75 @@
-import streamlit as st
-import pandas as pd
-import plotly.express as px
+#!/bin/bash
 
-# 1. 페이지 기본 설정
-st.set_page_config(page_title="서울시 지하철 접근성 소외지역 분석", layout="wide")
-st.title("서울시 지하철 접근성 소외지역 분석 대시보드")
+set -e
 
-# 2. 데이터 로드 및 전처리
-@st.cache(allow_output_mutation=True)
-def load_data():
-    df = pd.read_csv("final_top100_report.csv")
-    df.columns = [c.split('.')[-1] for c in df.columns]
-    df = df.rename(columns={'stops_nm': 'STOPS_NM', 'adstrd_nm': 'ADSTRD_NM', 'lon': 'LON', 'lat': 'LAT'})
-    df = df.dropna(subset=['LAT', 'LON', 'daily_total_on', 'distance_km', 'robust_score'])
-    return df
+echo "======================================================"
+echo "파이프라인 시작"
+echo "======================================================"
 
-df_original = load_data()
-df = df_original.copy() 
+hadoop fs -mkdir -p /user/maria_dev/project/
 
-# ==========================================
-# 사이드바 (컨트롤 패널)
-# ==========================================
+echo "[1] 데이터 수집 및 HDFS 업로드 (data.py)"
+python3.6 data.py
+echo "1 done"
+echo "------------------------------------------------------"
 
-st.sidebar.header("교통 취약 지수 가중치 설정")
-st.sidebar.caption("각 지표의 중요도를 조절하면 비율에 맞게 자동 환산되어 순위가 재계산됩니다.")
+echo "[2] spark 데이터 전처리 및 1차 조인 (join_data.py)"
+hadoop fs -rm -r -skipTrash /user/maria_dev/project/result_bus_data 2>/dev/null || true
+hadoop fs -rm -r -skipTrash /user/maria_dev/project/result_pop_data 2>/dev/null || true
+spark-submit --master yarn --deploy-mode cluster join_data.py
+echo "2 done"
+echo "------------------------------------------------------"
 
-# 가중치 입력
-raw_w_pop = st.sidebar.slider("생활인구 중요도 (잠재수요)", 0.0, 1.0, 0.3, step=0.1)
-raw_w_on = st.sidebar.slider("승하차 인원 중요도 (실수요)", 0.0, 1.0, 0.4, step=0.1)
-raw_w_dist = st.sidebar.slider("지하철역 거리 중요도 (접근성)", 0.0, 1.0, 0.3, step=0.1)
+echo "[3] 좌표계 변환 (EPSG:5181 -> WGS84) (convert.py)"
+python3.6 convert.py
+echo "3 done"
+echo "------------------------------------------------------"
 
-# 가중치 합 자동 보정 로직 (Normalization)
-total_w = raw_w_pop + raw_w_on + raw_w_dist
-if total_w > 0:
-    w_pop, w_on, w_dist = raw_w_pop / total_w, raw_w_on / total_w, raw_w_dist / total_w
-else:
-    w_pop, w_on, w_dist = 0.333, 0.333, 0.333
+echo "[4] 스파크 거리 계산 및 최종 분석 (analysis.py)"
+hadoop fs -rm -r -skipTrash /user/maria_dev/project/final 2>/dev/null || true
+spark-submit --master yarn --deploy-mode cluster analysis.py
+echo "4 done"
+echo "------------------------------------------------------"
 
-# 적용된 실제 비율(%)을 사용자에게 명확히 고지 (줄바꿈 마크다운 최적화)
-st.sidebar.info(
-    f"**실제 적용 반영비율**\n\n"
-    f"- 생활인구: **{w_pop*100:.1f}%**\n\n"
-    f"- 승하차 수요: **{w_on*100:.1f}%**\n\n"
-    f"- 물리적 거리: **{w_dist*100:.1f}%**"
-)
+echo "[5] Hive로 Top 100 리포트 추출"
+export HADOOP_CLIENT_OPTS="-Dfile.encoding=UTF-8"
+# 하이브 쿼리 실행 후 결과를 로컬 CSV로 저장
 
-# 실시간 동적 점수 계산
-df['dynamic_score'] = (w_pop * df['p_norm']) + (w_on * df['b_norm']) + (w_dist * df['d_norm'])
+hive --silent=true --showHeader=true --outputformat=csv2 -e \
+    "WITH FilteredData AS ( \
+        SELECT * \
+        FROM final_transit_blind_spot \
+        WHERE distance_km >= 1.0 \
+    ), \
+    RankedData AS ( \
+        SELECT *, \
+               PERCENT_RANK() OVER (ORDER BY total_living_pop ASC) AS p_norm, \
+               PERCENT_RANK() OVER (ORDER BY daily_total_on ASC) AS b_norm, \
+               PERCENT_RANK() OVER (ORDER BY distance_km ASC) AS d_norm \
+        FROM FilteredData \
+    ) \
+    SELECT *, \
+           ((0.3 * p_norm) + (0.4 * b_norm) + (0.3 * d_norm)) AS robust_score \
+    FROM RankedData \
+    ORDER BY robust_score DESC \
+    LIMIT 100;" > final_top100_report.csv
 
-st.sidebar.markdown("---")
-st.sidebar.header("탐색 조건 설정")
+# 최종 리포트를 HDFS에 백업
+hadoop fs -put -f final_top100_report.csv /user/maria_dev/project/
+echo "5 done: final_top100_report.csv 생성 및 HDFS 업로드"
+echo "======================================================"
+echo "all done"
+echo "======================================================"
 
-# 다중 행정동 선택
-selected_dongs = st.sidebar.multiselect("특정 행정동 집중 탐색", options=sorted(df['ADSTRD_NM'].unique()))
+# ... 기존 [5]번 파이프라인 코드 ...
+hadoop fs -put -f final_top100_report.csv /user/maria_dev/project/
+echo "5 done: final_top100_report.csv 생성 및 HDFS 업로드"
+echo "------------------------------------------------------"
 
-# 조건에 따른 데이터 필터링 및 정렬
-if selected_dongs:
-    filtered_df = df[df['ADSTRD_NM'].isin(selected_dongs)]
-else:
-    filtered_df = df
+echo "[6] 인터랙티브 웹 대시보드 실행 (app.py)"
+# 8501 포트
+streamlit run app.py --server.port 8501 
 
-filtered_df = filtered_df.sort_values('dynamic_score', ascending=False)
-
-# C. 데이터 내보내기 (다운로드)
-st.sidebar.markdown("---")
-st.sidebar.subheader("결과 내보내기")
-csv_data = filtered_df.to_csv(index=False).encode('utf-8-sig')
-st.sidebar.download_button(
-    label="현재 Top 100 결과 다운로드 (CSV)",
-    data=csv_data,
-    file_name="simulated_transit_blind_spots.csv",
-    mime="text/csv"
-)
-
-# ==========================================
-# 메인 화면 (대시보드)
-# ==========================================
-st.subheader(f"도출된 소외지역 정류장 목록 ({len(filtered_df)}개)")
-
-if len(filtered_df) > 0:
-
-    fig_map = px.scatter_mapbox(
-        filtered_df, lat="LAT", lon="LON", hover_name="STOPS_NM",
-        hover_data={
-            "ADSTRD_NM": True, "total_living_pop": True, "distance_km": ':.2f',
-            "daily_total_on": ':.0f', "dynamic_score": ':.3f',
-            "LAT": False, "LON": False, "p_norm": False, "b_norm": False, "d_norm": False, "robust_score": False
-        },
-        size="daily_total_on", color="dynamic_score",
-        color_continuous_scale=px.colors.sequential.YlOrRd, size_max=35, opacity=0.9,
-        labels={
-            "dynamic_score": "취약 지수 (점수)", "daily_total_on": "일일 승하차", 
-            "distance_km": "지하철역 거리(km)", "total_living_pop": "상주 생활인구", "ADSTRD_NM": "행정동"
-        }
-    )
-    fig_map.update_layout(
-        mapbox_style="carto-positron",
-        mapbox_zoom=10.5,
-        mapbox_center={"lat": 37.5665, "lon": 126.9780},
-        margin={"r":0, "t":0, "l":0, "b":0}
-    )
-    st.plotly_chart(fig_map, use_container_width=True)
-
-
-    st.markdown("---")
-    st.subheader("상세 정류장 목록 (Top 15)")
-    
-    # 출력에 필요한 컬럼 추출 및 영문명을 한글 직관적 명칭으로 매핑
-    display_df = filtered_df[['STOPS_NM', 'ADSTRD_NM', 'daily_total_on', 'dynamic_score']].head(15).rename(columns={
-        'STOPS_NM': '정류장명',
-        'ADSTRD_NM': '행정동',
-        'daily_total_on': '일일 승하차 인원',
-        'dynamic_score': '교통 취약 지수'
-    })
-
-    st.table(display_df)
-else:
-    st.warning("선택하신 조건에 맞는 데이터가 없습니다.")
+echo "======================================================"
+echo "all done"
+echo "======================================================"
