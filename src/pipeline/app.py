@@ -1,28 +1,35 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from pyarrow import fs
 
 # 1. 페이지 기본 설정
 st.set_page_config(page_title="서울시 대중교통 사각지대 분석", layout="wide")
 st.title("서울시 대중교통 사각지대 분석 대시보드")
 
+# HDFS 접속 정보
+HDFS_HOST = "sandbox-hdp.hortonworks.com"
+HDFS_PORT = 9999
+HDFS_USER = "maria_dev"
+HDFS_PATH = "/user/maria_dev/final_top100_report.csv"
+
 # 2. 데이터 로드 및 전처리
 @st.cache
 def load_data():
-    df = pd.read_csv("final_top100_report.csv", encoding="utf-8-sig")
-    
-    # 'rankeddata.stops_nm' 등의 접두사 제거
+    hdfs = fs.HadoopFileSystem(host=HDFS_HOST, port=HDFS_PORT, user=HDFS_USER)
+
+    with hdfs.open_input_file(HDFS_PATH) as f:
+        df = pd.read_csv(f, encoding="utf-8-sig")
+
     df.columns = [c.split('.')[-1] for c in df.columns]
-    
-    # 시각화 및 UI를 위한 컬럼명 통일
+
     df = df.rename(columns={
-        'stops_nm': 'STOPS_NM', 
-        'adstrd_nm': 'ADSTRD_NM', 
-        'lon': 'LON', 
+        'stops_nm': 'STOPS_NM',
+        'adstrd_nm': 'ADSTRD_NM',
+        'lon': 'LON',
         'lat': 'LAT'
     })
-    
-    # 필수 데이터 결측치 제거
+
     df = df.dropna(subset=['LAT', 'LON', 'daily_total_on', 'distance_km', 'robust_score'])
     return df
 
@@ -109,6 +116,7 @@ with col1:
             mapbox_center={"lat": 37.5665, "lon": 126.9780},
             margin={"r":0, "t":0, "l":0, "b":0}
         )
+        st.plotly_chart(fig_map, use_container_width=True)
     else:
         st.warning("조건에 맞는 정류장이 없습니다. 좌측 패널에서 조건을 완화해 보세요.")
 
