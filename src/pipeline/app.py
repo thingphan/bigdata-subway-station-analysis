@@ -89,7 +89,7 @@ col1, col2 = st.columns([7, 3])
 
 with col1:
     if len(filtered_df) > 0:
-        fig_map = px.scatter_map(
+        fig_map = px.scatter_mapbox(
             filtered_df, lat="LAT", lon="LON", hover_name="STOPS_NM",
             hover_data={
                 "ADSTRD_NM": True, "total_living_pop": True, "distance_km": ':.2f',
