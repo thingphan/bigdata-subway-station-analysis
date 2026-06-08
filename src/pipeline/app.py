@@ -9,7 +9,7 @@ st.title("서울시 대중교통 사각지대 분석 대시보드")
 
 # HDFS 접속 정보
 HDFS_HOST = "sandbox-hdp.hortonworks.com"
-HDFS_PORT = 9999
+HDFS_PORT = 8020
 HDFS_USER = "maria_dev"
 HDFS_PATH = "/user/maria_dev/final_top100_report.csv"
 
