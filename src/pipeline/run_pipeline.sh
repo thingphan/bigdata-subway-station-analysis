@@ -32,11 +32,24 @@ echo "------------------------------------------------------"
 echo "[5] Hive로 Top 100 리포트 추출"
 export HADOOP_CLIENT_OPTS="-Dfile.encoding=UTF-8"
 # 하이브 쿼리 실행 후 결과를 로컬 CSV로 저장
+
 hive --silent=true --showHeader=true --outputformat=csv2 -e \
-    "SELECT *, (LOG10(total_living_pop + 1) + LOG10(daily_total_on + 1)) * distance_km AS balanced_score \
-    FROM final_transit_blind_spot \
-    WHERE distance_km >= 1.0 \
-    ORDER BY balanced_score DESC \
+    "WITH FilteredData AS ( \
+        SELECT * \
+        FROM final_transit_blind_spot \
+        WHERE distance_km >= 1.0 \
+    ), \
+    RankedData AS ( \
+        SELECT *, \
+               PERCENT_RANK() OVER (ORDER BY total_living_pop ASC) AS p_norm, \
+               PERCENT_RANK() OVER (ORDER BY daily_total_on ASC) AS b_norm, \
+               PERCENT_RANK() OVER (ORDER BY distance_km ASC) AS d_norm \
+        FROM FilteredData \
+    ) \
+    SELECT *, \
+           ((0.3 * p_norm) + (0.4 * b_norm) + (0.3 * d_norm)) AS robust_score \
+    FROM RankedData \
+    ORDER BY robust_score DESC \
     LIMIT 100;" > final_top100_report.csv
 
 # 최종 리포트를 HDFS에 백업
