@@ -26,7 +26,7 @@ def load_data():
     df = df.dropna(subset=['LAT', 'LON', 'daily_total_on', 'distance_km', 'robust_score'])
     return df
 
-df = load_data()
+df_original = load_data()
 
 # ==========================================
 # 사이드바
@@ -47,6 +47,7 @@ if total_w > 0:
 else:
     w_pop, w_on, w_dist = 0.33, 0.33, 0.33
 
+df = df_original.copy()
 # 실시간 동적 점수 계산 (p_norm, b_norm, d_norm 활용)
 df['dynamic_score'] = (w_pop * df['p_norm']) + (w_on * df['b_norm']) + (w_dist * df['d_norm'])
 
