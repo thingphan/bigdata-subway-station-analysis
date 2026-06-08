@@ -6,6 +6,8 @@ echo "======================================================"
 echo "파이프라인 시작"
 echo "======================================================"
 
+hadoop fs -mkdir -p /user/maria_dev/project/
+
 echo "[1] 데이터 수집 및 HDFS 업로드 (data.py)"
 python3.6 data.py
 echo "1 done"
