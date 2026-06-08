@@ -35,7 +35,7 @@
 | Data Warehouse | Apache Hive                             |
 | Language       | Python (PySpark, PyProj)                |
 | Automation     | Bash Script                             |
-| Visualization  | Plotly                                  |
+| Visualization  | Streamlit, Plotly                                  |
 
 ## 데이터 파이프라인
 
