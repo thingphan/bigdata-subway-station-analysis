@@ -106,7 +106,7 @@
 
 ## Step 1. 환경 변수 설정
 
-프로젝트 루트에 `.env` 파일 생성
+프로젝트 루트에 `.env` 파일 생성 (서울 열린데이터 광장 인증키 입력)
 
 ```bash
 echo 'SEOUL_API_KEY="YOUR_API_KEY"' > .env
