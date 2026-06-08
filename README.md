@@ -102,7 +102,6 @@
 ---
 
 # 4. 실행 가이드 
-(HDFS /user/maria_dev/project 경로 존재 필수)
 
 ## Step 1. 환경 변수 설정
 
@@ -124,6 +123,7 @@ chmod +x run_pipeline.sh
 ```bash
 ./run_pipeline.sh
 ```
+(HDFS /user/maria_dev/project 경로 자동 생성됨)
 
 실행 결과:
 
