@@ -7,7 +7,7 @@ st.set_page_config(page_title="서울시 대중교통 사각지대 분석", layo
 st.title("서울시 대중교통 사각지대 분석 대시보드")
 
 # 2. 데이터 로드 및 전처리
-@st.cache_data
+@st.cache
 def load_data():
     df = pd.read_csv("final_top100_report.csv")
     
