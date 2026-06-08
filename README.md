@@ -131,9 +131,10 @@ chmod +x run_pipeline.sh
 final_top100_report.csv
 ```
 
-생성(시각화 실행할 로컬 환경으로 다운로드 필요함)
+생성 후 대시보드 실행(port 8501)
 
-## Step 4. 시각화 실행(vscode 등 외부 환경에서 실행)
+## Step 4.(optional) 시각화 실행(vscode 등 외부 환경에서 실행)
+final_top100_report.csv 시각화 실행할 로컬 환경으로 다운로드 필요
 
 ```bash
 python plot.py
