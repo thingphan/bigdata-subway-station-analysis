@@ -2,8 +2,26 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# 1. 페이지 기본 설정 (layout을 centered로 변경하여 너비 최적화)
+# 1. 페이지 기본 설정
 st.set_page_config(page_title="서울시 지하철 접근성 소외지역 분석", layout="centered")
+
+st.markdown(
+    """
+    <style>
+    /* 왼쪽 사이드바 너비 늘리기 */
+    [data-testid="stSidebar"] {
+        min-width: 380px;
+        max-width: 500px;
+    }
+    /* 최상단 제목 줄바꿈 방지 */
+    h1 {
+        white-space: nowrap;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 st.title("서울시 지하철 접근성 소외지역 분석 대시보드")
 
 # 2. 데이터 로드 및 전처리
@@ -105,7 +123,6 @@ if len(filtered_df) > 0:
     st.markdown("---")
     st.subheader("상세 정류장 목록 (Top 15)")
     
-    # 출력에 필요한 컬럼 추출 및 영문명을 한글 직관적 명칭으로 매핑
     display_df = filtered_df[['STOPS_NM', 'ADSTRD_NM', 'daily_total_on', 'dynamic_score']].head(15).rename(columns={
         'STOPS_NM': '정류장명',
         'ADSTRD_NM': '행정동',
