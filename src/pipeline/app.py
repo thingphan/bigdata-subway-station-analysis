@@ -2,18 +2,18 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# 1. 페이지 기본 설정
-st.set_page_config(page_title="서울시 지하철 접근성 소외지역 분석", layout="centered")
+st.set_page_config(
+    page_title="서울시 지하철 접근성 소외지역 분석", 
+    layout="wide"
+)
 
 st.markdown(
     """
     <style>
-
     [data-testid="stSidebar"] {
         min-width: 380px;
         max-width: 380px;
     }
- 
     h1 {
         white-space: nowrap;
     }
@@ -24,7 +24,9 @@ st.markdown(
 
 st.title("서울시 지하철 접근성 소외지역 분석 대시보드")
 
-# 2. 데이터 로드 및 전처리
+# ==========================================
+# 데이터 로드 및 전처리
+# ==========================================
 @st.cache(allow_output_mutation=True)
 def load_data():
     df = pd.read_csv("final_top100_report.csv")
@@ -121,15 +123,78 @@ if len(filtered_df) > 0:
     st.plotly_chart(fig_map, use_container_width=True)
 
     st.markdown("---")
-    st.subheader("상세 정류장 목록 (Top 15)")
+    st.subheader("상세 소외지역 정류장 전체 목록 (Top 100)")
     
-    display_df = filtered_df[['STOPS_NM', 'ADSTRD_NM', 'daily_total_on', 'dynamic_score']].head(15).rename(columns={
+
+    display_df = filtered_df[[
+        'STOPS_NM', 
+        'ADSTRD_NM', 
+        'distance_km', 
+        'total_living_pop', 
+        'daily_total_on', 
+        'dynamic_score'
+    ]].head(100).rename(columns={
         'STOPS_NM': '정류장명',
         'ADSTRD_NM': '행정동',
+        'distance_km': '지하철역 최단거리(km)',
+        'total_living_pop': '상주 생활인구 수',
         'daily_total_on': '일일 승하차 인원',
         'dynamic_score': '교통 취약 지수'
     })
 
-    st.table(display_df)
+
+    st.dataframe(display_df)
+
+    # === st.table(display_df) 코드 바로 아래에 추가 ===
+
+    st.markdown("---")
+    st.subheader("다차원 심층 분석")
+
+    tab1, tab2, tab3 = st.tabs([
+        "1. 거리 vs 수요 상관관계", 
+        "2. 인구 vs 수요 상관관계", 
+        "3. 행정동 공간 군집화(Clustering)"
+    ])
+
+    with tab1:
+        st.markdown("**질문: 지하철역과의 거리가 멀수록 버스 수요도 증가하는가?**")
+        fig1 = px.scatter(
+            filtered_df, x="distance_km", y="daily_total_on",
+            color="dynamic_score", hover_name="STOPS_NM",
+            color_continuous_scale=px.colors.sequential.YlOrRd,
+            labels={"distance_km": "지하철역 이격 거리(km)", "daily_total_on": "일일 승하차 인원", "dynamic_score": "취약 지수"}
+        )
+        st.plotly_chart(fig1, use_container_width=True)
+
+    with tab2:
+        st.markdown("**질문: 상주 생활인구가 많으면 버스 수요도 무조건 높은가?**")
+        fig2 = px.scatter(
+            filtered_df, x="total_living_pop", y="daily_total_on",
+            color="distance_km", hover_name="STOPS_NM", size="dynamic_score",
+            color_continuous_scale="Viridis",
+            labels={"total_living_pop": "상주 생활인구 수", "daily_total_on": "일일 승하차 인원", "distance_km": "지하철 거리(km)", "dynamic_score": "취약 지수"}
+        )
+        st.plotly_chart(fig2, use_container_width=True)
+
+    with tab3:
+        st.markdown("**질문: 교통 소외 정류장들이 특정 행정동에 뚜렷하게 군집화(Clustering)되어 나타나는가?**")
+        
+        # 트리맵(Treemap)을 활용하여 행정동 내 정류장들의 군집 상태를 시각화
+        # 네모의 크기는 승하차 수요, 색상의 진하기는 취약 지수를 나타냄
+        fig3 = px.treemap(
+            filtered_df, 
+            path=[px.Constant("서울시 소외지역 Top 100"), "ADSTRD_NM", "STOPS_NM"],
+            values="daily_total_on",
+            color="dynamic_score",
+            hover_data=["distance_km", "total_living_pop"],
+            color_continuous_scale=px.colors.sequential.YlOrRd,
+            labels={"dynamic_score": "취약 지수", "daily_total_on": "일일 승하차"}
+        )
+        fig3.update_traces(root_color="lightgrey")
+        fig3.update_layout(margin=dict(t=30, l=0, r=0, b=0))
+        
+        st.plotly_chart(fig3, use_container_width=True)
+        
+        st.caption("※ 사각형의 크기는 '일일 승하차 인원'을, 색상의 농도는 '교통 취약 지수'를 의미합니다. 큰 사각형이 붉은색으로 군집된 행정동이 최우선 개선 타겟입니다.")
 else:
     st.warning("선택하신 조건에 맞는 데이터가 없습니다.")
