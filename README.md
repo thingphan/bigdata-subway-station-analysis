@@ -132,6 +132,7 @@ echo 'SEOUL_API_KEY="YOUR_API_KEY"' > .env
 ```bash
 cd src/pipeline
 chmod +x run_pipeline.sh
+./run_pipeline.sh
 ```
 
 ## Step 3. 분석 결과 탐색
