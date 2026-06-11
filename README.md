@@ -104,6 +104,7 @@
 # 4. 실행 가이드 
 
 ## Step 0. SSH 터널 설정
+putty 설정에서 SSH port forwarding에 L8501, 127.0.0.1:8501 추가 후 save
 gcptutorial 계정에서 추가 SSH 터널 열기
 ```bash
 ssh -N -L 8501:localhost:8501 maria_dev@localhost -p 2222
