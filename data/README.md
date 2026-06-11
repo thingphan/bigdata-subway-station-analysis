@@ -9,3 +9,10 @@
 | **서울시 역사마스터 정보** | `subway_station_coords.csv` | 서울 시내 지하철역 위치 정보 (버스 정류장과의 최단 거리 계산 기준) | [링크](https://data.seoul.go.kr/dataList/OA-21232/S/1/datasetView.do) |
 | **버스 정류장별 시간대별 승하차** | `bus_time_data_2025.csv` | 노선별·정류장별 시간대별 승하차 승객 데이터로 실질적 수요 도출 | [링크](https://data.seoul.go.kr/dataList/OA-12913/S/1/datasetView.do) |
 | **서울시 버스정류소 위치정보** | `bus_stop_coords.csv` | 모든 버스 정류장의 좌표를 확보하여 공간 분석의 기초 데이터로 활용 | [링크](https://data.seoul.go.kr/dataList/OA-15067/A/1/datasetView.do) |
+
+
+##  추출 데이터
+| **버스 데이터** | `result_bus_data.csv` | 정류소번호(STOPS_NO), 정류소명(STOPS_NM), X좌표(XCRD), Y좌표(YCRD), 총승하차인원(TOTAL_PASSENGERS) |
+| **행정동 데이터** | `result_pop_data.csv` | 행정동_코드(ADSTRD_CD), 행정동_명(ADSTRD_NM), X좌표(XCNTS_VALUE), Y좌표(YDNTS_VALUE), 영역_면적(RELM_AR), 총생활인구수(ANNUAL_TOT_LVPOP_CO) |
+| **final 데이터** | `final.csv` | 정류소번호(STOPS_NO), 행정동_명(ADSTRD_NM), X좌표(XCRD), Y좌표(YCRD), 총생활인구수(total_living_pop), 지하철역간의거리(distance_km), 일일총승하차인원(daily_total_on) |
+| **final top 100 데이터** | `final_top100_report.csv` | 정류소번호(rankeddata.stops_nm), 행정동_명(rankeddata.adstrd_nm), X좌표(rankeddata.lon), Y좌표(rankeddata.lat), 총생활인구수(rankeddata.total_living_pop), 지하철역간의거리(rankeddata.distance_km), 일일총승하차인원(rankeddata.daily_total_on), 생활인구정규화(rankeddata.p_norm), 승하차인원정규화(rankeddata.b_norm), 지하철거리정규화(rankeddata.d_norm), 교통취약점수(robust_score) |
