@@ -145,18 +145,21 @@ if len(filtered_df) > 0:
 
     st.dataframe(display_df)
 
-    # === st.table(display_df) 코드 바로 아래에 추가 ===
+    # === st.dataframe(display_df) 코드 바로 아래에 추가 ===
 
     st.markdown("---")
     st.subheader("다차원 심층 분석")
 
-    tab1, tab2, tab3 = st.tabs([
-        "1. 거리 vs 수요 상관관계", 
-        "2. 인구 vs 수요 상관관계", 
-        "3. 행정동 공간 군집화(Clustering)"
-    ])
+    analysis_option = st.selectbox(
+        "확인하고 싶은 분석 주제를 선택하세요:",
+        [
+            "1. 거리 vs 수요 상관관계", 
+            "2. 인구 vs 수요 상관관계", 
+            "3. 행정동 공간 군집화(Clustering)"
+        ]
+    )
 
-    with tab1:
+    if analysis_option == "1. 거리 vs 수요 상관관계":
         st.markdown("**질문: 지하철역과의 거리가 멀수록 버스 수요도 증가하는가?**")
         fig1 = px.scatter(
             filtered_df, x="distance_km", y="daily_total_on",
@@ -166,7 +169,7 @@ if len(filtered_df) > 0:
         )
         st.plotly_chart(fig1, use_container_width=True)
 
-    with tab2:
+    elif analysis_option == "2. 인구 vs 수요 상관관계":
         st.markdown("**질문: 상주 생활인구가 많으면 버스 수요도 무조건 높은가?**")
         fig2 = px.scatter(
             filtered_df, x="total_living_pop", y="daily_total_on",
@@ -176,11 +179,10 @@ if len(filtered_df) > 0:
         )
         st.plotly_chart(fig2, use_container_width=True)
 
-    with tab3:
+    else:
         st.markdown("**질문: 교통 소외 정류장들이 특정 행정동에 뚜렷하게 군집화(Clustering)되어 나타나는가?**")
         
         # 트리맵(Treemap)을 활용하여 행정동 내 정류장들의 군집 상태를 시각화
-        # 네모의 크기는 승하차 수요, 색상의 진하기는 취약 지수를 나타냄
         fig3 = px.treemap(
             filtered_df, 
             path=[px.Constant("서울시 소외지역 Top 100"), "ADSTRD_NM", "STOPS_NM"],
