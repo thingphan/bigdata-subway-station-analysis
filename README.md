@@ -108,7 +108,7 @@ gcptutorial 계정에서 추가 SSH 터널 열기
 ```bash
 ssh -N -L 8501:localhost:8501 maria_dev@localhost -p 2222
 ```
-이후 새로운 터미널에서 다음 단계 진행
+이후 새로운 터미널(ssh maria_dev@localhost -p 2222)에서 다음 단계 진행
 
 ## Step 1. 환경 변수 설정
 
