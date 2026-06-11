@@ -104,13 +104,16 @@
 # 4. 실행 가이드 
 
 ### Step 0. 포트 포워딩 및 SSH 접속
+
 웹 대시보드 서빙을 위해 로컬 호스트와 HDP 샌드박스 간의 8501 포트 터널링이 선행되어야 한다.
 
 1. **PuTTY 설정:** `Connection > SSH > Tunnels` 메뉴에서 `Source port: 8501`, `Destination: 127.0.0.1:8501`을 추가(Add)하고 세션을 저장한다.
+   
 2. **추가 터널링 (Host 환경):** `gcptutorial` 계정 쉘에서 아래 명령어를 실행하여 Sandbox(`maria_dev`) 내부로 포트 포워딩을 연결한다.
    ```bash
    ssh -N -L 8501:localhost:8501 maria_dev@localhost -p 2222
    ```
+   
 3. **작업 세션 오픈:** 새로운 터미널 창을 열고 파이프라인을 실행할 HDP 샌드박스 환경으로 접속한다.
    ```bash
    ssh maria_dev@localhost -p 2222
