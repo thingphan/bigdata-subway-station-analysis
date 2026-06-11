@@ -67,6 +67,8 @@ echo "5 done: final_top100_report.csv 생성 및 HDFS 업로드"
 echo "------------------------------------------------------"
 
 echo "[6] 인터랙티브 웹 대시보드 실행 (app.py)"
+export LANG=en_US.utf8
+export LC_ALL=en_US.utf8
 # 8501 포트
 streamlit run app.py --server.port 8501 
 
