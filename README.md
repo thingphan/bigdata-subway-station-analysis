@@ -103,44 +103,38 @@
 
 # 4. 실행 가이드 
 
-## Step 0. SSH 터널 설정
-putty 설정에서 SSH port forwarding에 L8501, 127.0.0.1:8501 추가 후 save
-gcptutorial 계정에서 추가 SSH 터널 열기
-```bash
-ssh -N -L 8501:localhost:8501 maria_dev@localhost -p 2222
-```
-이후 새로운 터미널(ssh maria_dev@localhost -p 2222)에서 다음 단계 진행
+### Step 0. 포트 포워딩 및 SSH 접속
+웹 대시보드 서빙을 위해 로컬 호스트와 HDP 샌드박스 간의 8501 포트 터널링이 선행되어야 한다.
 
+1. **PuTTY 설정:** `Connection > SSH > Tunnels` 메뉴에서 `Source port: 8501`, `Destination: 127.0.0.1:8501`을 추가(Add)하고 세션을 저장한다.
+2. **추가 터널링 (Host 환경):** `gcptutorial` 계정 쉘에서 아래 명령어를 실행하여 Sandbox(`maria_dev`) 내부로 포트 포워딩을 연결한다.
+   ```bash
+   ssh -N -L 8501:localhost:8501 maria_dev@localhost -p 2222
+   ```
+3. **작업 세션 오픈:** 새로운 터미널 창을 열고 파이프라인을 실행할 HDP 샌드박스 환경으로 접속한다.
+   ```bash
+   ssh maria_dev@localhost -p 2222
+   ```
+   
 ## Step 1. 환경 변수 설정
-
-프로젝트 루트에 `.env` 파일 생성 (서울 열린데이터 광장 인증키 입력)
+데이터 수집에 필요한 서울 열린데이터 광장 Open API 인증키를 시스템에 등록합니다. 프로젝트 루트 디렉토리에 .env 파일을 생성한다.
 
 ```bash
 echo 'SEOUL_API_KEY="YOUR_API_KEY"' > .env
 ```
 
-## Step 2. 실행 권한 부여
-
+## Step 2. 파이프라인 자동화 실행
+스크립트에 실행 권한을 부여하고, 단일 쉘 스크립트를 통해 전체 파이프라인(API 수집 → Spark 분산 처리 → Hive 마트 적재 → 웹 서빙)을 원스톱으로 실행한다.
+(실행 시 HDFS 작업 경로 /user/maria_dev/project/는 자동으로 구축된다.)
 ```bash
 cd src/pipeline
 chmod +x run_pipeline.sh
 ```
 
-## Step 3. 전체 파이프라인 실행
+## Step 3. 분석 결과 탐색
+파이프라인 처리가 성공적으로 완료되면 최종 리포트(final_top100_report.csv)가 로컬 및 HDFS에 추출되며, 마지막 단계에서 Streamlit 웹 서버가 자동 구동된다.
 
-```bash
-./run_pipeline.sh
-```
-(HDFS /user/maria_dev/project 경로 자동 생성됨)
-
-실행 결과:
-
-```text
-final_top100_report.csv
-```
-
-생성 후 대시보드 실행(port 8501)
-localhost 8501로 접속
+접속 경로: 로컬 브라우저를 열고 http://localhost:8501 로 접속하여 도출된 시뮬레이션 대시보드를 탐색한다.
 
 
 ---
