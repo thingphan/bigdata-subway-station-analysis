@@ -14,8 +14,8 @@
 ##  추출 데이터
 | 데이터명 | 파일명 | 스키마 |
 | :--- | :--- | :--- |
-| **버스 데이터** | `result_bus_data.csv` | 정류소번호(STOPS_NO), 정류소명(STOPS_NM), X좌표(XCRD), Y좌표(YCRD), 총승하차인원(TOTAL_PASSENGERS) |
-| **행정동 데이터** | `result_pop_data.csv` | 행정동_코드(ADSTRD_CD), 행정동_명(ADSTRD_NM), X좌표(XCNTS_VALUE), Y좌표(YDNTS_VALUE), 영역_면적(RELM_AR), 총생활인구수(ANNUAL_TOT_LVPOP_CO) |
-| **행정동 좌표 변환 데이터** | `result_pop_data_converted.csv` | 정류소번호(STOPS_NO), 행정동_명(ADSTRD_NM), X좌표(XCRD), Y좌표(YCRD), 총생활인구수(total_living_pop), 지하철역간의거리(distance_km), 일일총승하차인원(daily_total_on), 경도(DONG_LON), 위도(DONG_LAT) |
-| **final 데이터** | `final.csv` | 정류소번호(STOPS_NO), 행정동_명(ADSTRD_NM), X좌표(XCRD), Y좌표(YCRD), 총생활인구수(total_living_pop), 지하철역간의거리(distance_km), 일일총승하차인원(daily_total_on) |
-| **final top 100 데이터** | `final_top100_report.csv` | 정류소번호(rankeddata.stops_nm), 행정동_명(rankeddata.adstrd_nm), X좌표(rankeddata.lon), Y좌표(rankeddata.lat), 총생활인구수(rankeddata.total_living_pop), 지하철역간의거리(rankeddata.distance_km), 일일총승하차인원(rankeddata.daily_total_on), 생활인구정규화(rankeddata.p_norm), 승하차인원정규화(rankeddata.b_norm), 지하철거리정규화(rankeddata.d_norm), 교통취약점수(robust_score) |
+| **버스 데이터** | `result_bus_data` | 정류소번호(STOPS_NO), 정류소명(STOPS_NM), X좌표(XCRD), Y좌표(YCRD), 총승하차인원(TOTAL_PASSENGERS) |
+| **행정동 데이터** | `result_pop_data` | 행정동_코드(ADSTRD_CD), 행정동_명(ADSTRD_NM), X좌표(XCNTS_VALUE), Y좌표(YDNTS_VALUE), 영역_면적(RELM_AR), 총생활인구수(ANNUAL_TOT_LVPOP_CO) |
+| **행정동 좌표 변환 데이터** | `result_pop_data_converted` | 정류소번호(STOPS_NO), 행정동_명(ADSTRD_NM), X좌표(XCRD), Y좌표(YCRD), 총생활인구수(total_living_pop), 지하철역간의거리(distance_km), 일일총승하차인원(daily_total_on), 경도(DONG_LON), 위도(DONG_LAT) |
+| **final 데이터** | `final` | 정류소번호(STOPS_NO), 행정동_명(ADSTRD_NM), X좌표(XCRD), Y좌표(YCRD), 총생활인구수(total_living_pop), 지하철역간의거리(distance_km), 일일총승하차인원(daily_total_on) |
+| **final top 100 데이터** | `final_top100_report` | 정류소번호(rankeddata.stops_nm), 행정동_명(rankeddata.adstrd_nm), X좌표(rankeddata.lon), Y좌표(rankeddata.lat), 총생활인구수(rankeddata.total_living_pop), 지하철역간의거리(rankeddata.distance_km), 일일총승하차인원(rankeddata.daily_total_on), 생활인구정규화(rankeddata.p_norm), 승하차인원정규화(rankeddata.b_norm), 지하철거리정규화(rankeddata.d_norm), 교통취약점수(robust_score) |
