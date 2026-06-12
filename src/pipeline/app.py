@@ -31,7 +31,7 @@ st.title("서울시 지하철 접근성 소외지역 분석 대시보드")
 def load_data():
     df = pd.read_csv("final_top100_report.csv")
     df.columns = [c.split('.')[-1] for c in df.columns]
-    df = df.rename(columns={'stops_nm': 'STOPS_NM', 'adstrd_nm': 'ADSTRD_NM', 'lon': 'LON', 'lat': 'LAT'})
+    df = df.rename(columns={'stops_nm': 'STOPS_NM', 'adstrd_nm': 'ADSTRD_NM', 'xcrd': 'LON', 'ycrd': 'LAT'})
     df = df.dropna(subset=['LAT', 'LON', 'daily_total_on', 'distance_km', 'robust_score'])
     return df
 
