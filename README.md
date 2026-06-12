@@ -120,9 +120,10 @@
    ```
    
 ## Step 1. 환경 변수 설정
-데이터 수집에 필요한 서울 열린데이터 광장 Open API 인증키를 시스템에 등록합니다. 프로젝트 루트 디렉토리에 .env 파일을 생성한다.
+데이터 수집에 필요한 서울 열린데이터 광장 Open API 인증키를 시스템에 등록한다. 프로젝트 루트 디렉토리에 .env 파일을 생성한다.
 
 ```bash
+cd bigdata-subway-station-analysis/
 echo 'SEOUL_API_KEY="YOUR_API_KEY"' > .env
 ```
 
