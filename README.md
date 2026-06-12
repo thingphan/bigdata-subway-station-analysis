@@ -102,11 +102,6 @@
 ---
 
 # 4. 실행 가이드 
- 본 프로젝트는 외부 라이브러리인 pandas, requests, python-dotenv등을 사용하고 있으므로 새로운 로컬 환경에서 코드를 실행할 때 ModuleNotFoundError가 발생하지 않도록 파이썬 패키지를 설치해야 한다.
-   ```bash
-   # 필수 파이썬 패키지 일괄 설치
-   pip install pandas requests python-dotenv pyproj streamlit plotly
-   ```
 
 ## Step 0. 포트 포워딩 및 SSH 접속
 
@@ -125,10 +120,12 @@
    ```
    
 ## Step 1. 환경 변수 설정
-데이터 수집에 필요한 서울 열린데이터 광장 Open API 인증키를 시스템에 등록한다. 프로젝트 루트 디렉토리에 .env 파일을 생성한다.
+새로운 로컬(샌드박스) 환경에서 파이프라인 코드를 실행할 때 ModuleNotFoundError가 발생하지 않도록 필수 패키지를 설치하고, 데이터 수집에 필요한 서울 열린데이터 광장 Open API 인증키를 시스템에 등록한다.
 
 ```bash
 cd bigdata-subway-station-analysis/
+# 필수 파이썬 패키지 일괄 설치
+pip install pandas requests python-dotenv pyproj streamlit plotly
 echo 'SEOUL_API_KEY="YOUR_API_KEY"' > .env
 ```
 
@@ -145,7 +142,7 @@ chmod +x run_pipeline.sh
 파이프라인 처리가 성공적으로 완료되면 최종 리포트(final_top100_report.csv)가 로컬 및 HDFS에 추출되며, 마지막 단계에서 Streamlit 웹 서버가 자동 구동된다.
 
 접속 경로: 로컬 브라우저를 열고 http://localhost:8501 로 접속하여 도출된 시뮬레이션 대시보드를 탐색한다.
-
+(참고) 대시보드 탐색 중에는 터미널 창을 닫지 말고 그대로 유지해야 하며, 웹 서버 구동을 종료하고 싶을 경우 해당 터미널 창에서 Ctrl + C를 입력한다.
 
 ---
 
