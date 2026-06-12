@@ -38,7 +38,22 @@ export HADOOP_CLIENT_OPTS="-Dfile.encoding=UTF-8"
 
 # 하이브 쿼리 실행 후 결과를 로컬 CSV로 저장
 hive --silent=true --showHeader=true --outputformat=csv2 -e \
-    "WITH FilteredData AS ( \
+    "CREATE EXTERNAL TABLE IF NOT EXISTS final_transit_blind_spot (
+        stops_nm STRING,
+        adstrd_nm STRING,
+        xcrd DOUBLE,
+        ycrd DOUBLE,
+        total_living_pop BIGINT,
+        distance_km DOUBLE,
+        daily_total_on BIGINT
+    )
+    ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+    STORED AS TEXTFILE
+    LOCATION '/user/maria_dev/project/final'
+    tblproperties (\"skip.header.line.count\"=\"1\");
+    
+    
+    WITH FilteredData AS ( \
         SELECT * \
         FROM final_transit_blind_spot \
         WHERE distance_km >= 1.0 \
