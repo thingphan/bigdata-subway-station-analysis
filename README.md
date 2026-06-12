@@ -102,6 +102,11 @@
 ---
 
 # 4. 실행 가이드 
+ 본 프로젝트는 외부 라이브러리인 pandas, requests, python-dotenv를 사용하고 있으므로 새로운 로컬 환경에서 코드를 실행할 때 ModuleNotFoundError가 발생하지 않도록 파이썬 패키지를 설치해야 한다.
+   ```bash
+   # 필수 파이썬 패키지 설치
+   pip install pandas requests python-dotenv
+   ```
 
 ## Step 0. 포트 포워딩 및 SSH 접속
 
