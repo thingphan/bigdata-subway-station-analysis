@@ -124,8 +124,8 @@
 
 ```bash
 cd bigdata-subway-station-analysis/
-# 필수 파이썬 패키지 일괄 설치
-pip install pandas requests python-dotenv pyproj streamlit plotly
+# Python 3 환경을 위한 필수 패키지 일괄 설치
+pip3 install pandas requests python-dotenv pyproj streamlit plotly
 echo 'SEOUL_API_KEY="YOUR_API_KEY"' > .env
 ```
 
