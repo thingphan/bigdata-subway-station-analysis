@@ -1,4 +1,4 @@
-rankeddata.stops_nm,rankeddata.adstrd_nm,rankeddata.lon,rankeddata.lat,rankeddata.total_living_pop,rankeddata.distance_km,rankeddata.daily_total_on,rankeddata.p_norm,rankeddata.b_norm,rankeddata.d_norm,robust_score
+rankeddata.stops_nm,rankeddata.adstrd_nm,rankeddata.xcrd,rankeddata.ycrd,rankeddata.total_living_pop,rankeddata.distance_km,rankeddata.daily_total_on,rankeddata.p_norm,rankeddata.b_norm,rankeddata.d_norm,robust_score
 벽산아파트5단지,이촌1동,126.921018114,37.4500584604,25226,2.34,1147724.0,0.8363499245852187,0.9894419306184012,0.9562594268476622,0.9335595776772248
 제2공학관,이촌1동,126.9520772668,37.4487952024,25226,2.34,840540.0,0.8363499245852187,0.9751131221719457,0.9562594268476622,0.9278280542986425
 벽산아파트1단지.호압사입구,이촌1동,126.9207601084,37.4527573711,25226,2.38,487755.0,0.8363499245852187,0.8808446455505279,0.9592760180995475,0.8910256410256411
