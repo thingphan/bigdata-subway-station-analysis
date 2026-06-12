@@ -37,8 +37,11 @@ echo "[5] Hive로 Top 100 리포트 추출 및 정규화"
 export HADOOP_CLIENT_OPTS="-Dfile.encoding=UTF-8"
 
 # 하이브 쿼리 실행 후 결과를 로컬 CSV로 저장
+hdfs dfs -chmod -R 755 /user/maria_dev/project/final
+
 hive --silent=true --showHeader=true --outputformat=csv2 -e \
-    "CREATE EXTERNAL TABLE IF NOT EXISTS final_transit_blind_spot (
+    "DROP TABLE IF EXISTS final_transit_blind_spot;
+    CREATE EXTERNAL TABLE final_transit_blind_spot (
         stops_nm STRING,
         adstrd_nm STRING,
         xcrd DOUBLE,
